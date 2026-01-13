@@ -114,27 +114,103 @@ func handle_move(x, y):
 			$GameOverMenu.show()
 	$PlayerPanel.visible = !$PlayerPanel.visible
 	$OpponentPanel.visible = !$OpponentPanel.visible
-	
-func CPU_Pick_Move(level):
-	await get_tree().create_timer(1.0).timeout
+
+func findPushableMove(targetType):
+	var positions: Array
+	for x in range(2):
+		for y in range(6):
+			if grid_data[x][y] == targetType:
+				# find position to push further left
+				if (y !=0 ):
+					if grid_data[x+1][y-1] == 0:
+						positions.append(Vector2i(x+1,y-1))
+				if grid_data[x+1][y] == 0:
+					positions.append(Vector2i(x+1, y))
+				if (y != 5):
+					if grid_data[x+1][y+1] == 0:
+						positions.append(Vector2i(x+1, y+1))
+	for x in range(2):
+		for y in range(6):
+			if grid_data[x+4][y] == targetType:
+				if (y !=0):
+					if grid_data[x+3][y-1] == 0:
+						positions.append(Vector2i(x+3, y-1))
+				if grid_data[x+3][y] == 0:
+					positions.append(Vector2i(x+3, y))
+				if (y != 5):
+					if grid_data[x+3][y+1] == 0:
+						positions.append(Vector2i(x+3, y+1))
+	for x in range(6):
+		for y in range(2):
+			if grid_data[x][y] == targetType:
+				if (x != 0):
+					if grid_data[x-1][y+1] == 0:
+						positions.append(Vector2i(x-1, y+1))
+				if grid_data[x][y+1] == 0:
+					positions.append(Vector2i(x, y+1))
+				if (x != 5):
+					if grid_data[x+1][y+1] == 0:
+						positions.append(Vector2i(x+1, y+1))
+	for x in range(6):
+		for y in range(2):
+			if grid_data[x][y+4] == targetType:
+				if (x != 0):
+					if grid_data[x-1][y+3] == 0:
+						positions.append(Vector2i(x-1, y+3))
+				if grid_data[x][y+3] == 0:
+					positions.append(Vector2i(x, y+3))
+				if (x != 5):
+					if grid_data[x+1][y+3] == 0:
+						positions.append(Vector2i(x+1, y+3))
+	return positions
+func CPU_FindMoveForLevel(level):
 	var x = 0
 	var y = 0
-	if (level == 1):			
-		x = randi() % 6
-		y = randi() % 6
-		while grid_data[x][y] != 0:
-			x = randi() % 6
-			y = randi() % 6
-	if (level == 2):
-		# avoids playing on the edges
+	
+	if (level == 2): # avoids playing on edge
+		var iterations = 0
 		x = randi() % 4
 		y = randi() % 4
-		while grid_data[x+1][y+1] != 0:
+		while grid_data[x+1][y+1] != 0 and iterations < 10:
+			iterations += 1
 			x = randi() % 4
 			y = randi() % 4
-		x += 1
-		y += 1
-	handle_move(x,y)
+		if grid_data[x+1][y+1] != 0: # couldn't find innner square within 10 moves
+			return CPU_FindMoveForLevel(1)
+	if (level == 3): # focuses on the center and pushing off the opponent
+		var positions: Array
+		if randi() % 10 >= 3: # 70% of the time, it will look for moves that push opposing pieces near edges
+			var pushMoves = findPushableMove(player * -1)
+			if pushMoves != null:
+				positions = pushMoves
+		
+		# regardless of whether it can push pieces around, it always considers the four center positions
+		if grid_data[2][2] == 0:
+			positions.append(Vector2i(2,2))
+		if grid_data[3][3] == 0:
+			positions.append(Vector2i(3,3))
+		if grid_data[2][3] == 0:
+			positions.append(Vector2i(2,3))
+		if grid_data[3][2] == 0:
+			positions.append(Vector2i(3,2))
+		if positions.size() > 0:
+			return positions.pick_random()
+		
+		# if no center positions are open and no good pushes exist, picks randomly
+		return CPU_FindMoveForLevel(2)
+	
+	# base case (lvl1) picks completely randomly
+	x = randi()%6
+	y = randi()%6
+	while grid_data[x][y] != 0:
+		x = randi() % 6
+		y = randi() % 6
+
+	return Vector2i(x, y)
+func CPU_Pick_Move(level):
+	await get_tree().create_timer(1.0).timeout
+	var movePosition = CPU_FindMoveForLevel(level)
+	handle_move(movePosition.x, movePosition.y)
 
 func add_node_to_group(node, special_name):
 	node.add_to_group(special_name)

@@ -67,6 +67,7 @@ theme_override_font_sizes/normal_font_size = 28
 text = "Blanc Norman. His powers do nothing.
 Rotate: Turns the piece 90 degrees.
 Paint It Black: Turns the placed piece black."
+scroll_active = false
 
 [node name="p2Description" type="RichTextLabel" parent="CharSelect"]
 layout_mode = 0
@@ -78,6 +79,7 @@ theme_override_font_sizes/normal_font_size = 28
 text = "Ninja Girl Denn. Good sneaker (no shoes).
 Shinobi Ashi - Does not move adjacent pieces.
 00X: Invisible to opposing pieces."
+scroll_active = false
 
 [node name="CheckButton" type="CheckButton" parent="CharSelect"]
 layout_mode = 0
@@ -113,7 +115,7 @@ offset_top = 800.0
 offset_right = 500.0
 offset_bottom = 900.0
 min_value = 1.0
-max_value = 2.0
+max_value = 3.0
 value = 1.0
 
 [node name="Panel" type="Panel" parent="CharSelect"]
