@@ -1,0 +1,151 @@
+[gd_scene load_steps=9 format=3 uid="uid://dndlhfndare7t"]
+
+[ext_resource type="Script" uid="uid://btgmnw8xria67" path="res://title.gd" id="1_c0dwi"]
+[ext_resource type="Texture2D" uid="uid://qjenw7h7ikit" path="res://assets/SplashScreen.png" id="2_ax32a"]
+[ext_resource type="Texture2D" uid="uid://c6m5ektuadaf3" path="res://assets/Blanc.png" id="2_quvj1"]
+[ext_resource type="Texture2D" uid="uid://dx1l8e6gvhu5e" path="res://assets/Ninja.png" id="3_e4n62"]
+[ext_resource type="Texture2D" uid="uid://umv244jkmqqg" path="res://assets/p1Border.png" id="4_rg4ux"]
+[ext_resource type="Texture2D" uid="uid://buksdrfrya3fu" path="res://assets/Cosmo.png" id="5_yytgh"]
+
+[sub_resource type="Theme" id="Theme_rg4ux"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kpm8p"]
+
+[node name="TitleScreen" type="Node2D"]
+script = ExtResource("1_c0dwi")
+
+[node name="CharSelect" type="Panel" parent="."]
+offset_top = 900.0
+offset_right = 1080.0
+offset_bottom = 1920.0
+
+[node name="BattleButton" type="Button" parent="CharSelect"]
+layout_mode = 0
+offset_left = 400.0
+offset_top = 500.0
+offset_right = 610.0
+offset_bottom = 596.0
+theme_override_font_sizes/font_size = 64
+text = "FIGHT!"
+
+[node name="p1Sprite" type="Sprite2D" parent="CharSelect"]
+texture = ExtResource("2_quvj1")
+offset = Vector2(128, 128)
+
+[node name="p2Sprite" type="Sprite2D" parent="CharSelect"]
+texture = ExtResource("3_e4n62")
+offset = Vector2(952, 900)
+flip_h = true
+
+[node name="p2CPUButton" type="CheckButton" parent="CharSelect"]
+layout_mode = 0
+offset_left = 525.0
+offset_top = 800.0
+offset_right = 729.0
+offset_bottom = 896.0
+theme = SubResource("Theme_rg4ux")
+theme_override_font_sizes/font_size = 64
+button_pressed = true
+text = "CPU?"
+
+[node name="p1Border" type="Sprite2D" parent="CharSelect"]
+position = Vector2(540, 128)
+texture = ExtResource("4_rg4ux")
+
+[node name="p2Border" type="Sprite2D" parent="CharSelect"]
+position = Vector2(540, 900)
+texture = ExtResource("4_rg4ux")
+flip_h = true
+flip_v = true
+
+[node name="p1Description" type="RichTextLabel" parent="CharSelect"]
+layout_mode = 0
+offset_left = 350.0
+offset_right = 1000.0
+offset_bottom = 125.0
+theme_override_font_sizes/normal_font_size = 28
+text = "Blanc Norman. His powers do nothing.
+Rotate: Turns the piece 90 degrees.
+Paint It Black: Turns the placed piece black."
+
+[node name="p2Description" type="RichTextLabel" parent="CharSelect"]
+layout_mode = 0
+offset_left = 150.0
+offset_top = 900.0
+offset_right = 800.0
+offset_bottom = 1025.0
+theme_override_font_sizes/normal_font_size = 28
+text = "Ninja Girl Denn. Good sneaker (no shoes).
+Shinobi Ashi - Does not move adjacent pieces.
+00X: Invisible to opposing pieces."
+
+[node name="CheckButton" type="CheckButton" parent="CharSelect"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 275.0
+offset_right = 234.0
+offset_bottom = 371.0
+theme_override_font_sizes/font_size = 64
+text = "CPU?"
+
+[node name="BlancButton" type="TextureButton" parent="CharSelect"]
+layout_mode = 0
+offset_left = 300.0
+offset_top = 375.0
+offset_right = 556.0
+offset_bottom = 631.0
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("2_quvj1")
+
+[node name="NinjaButton" type="TextureButton" parent="CharSelect"]
+layout_mode = 0
+offset_left = 450.0
+offset_top = 375.0
+offset_right = 706.0
+offset_bottom = 631.0
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("3_e4n62")
+
+[node name="P2LevelSlider" type="HSlider" parent="CharSelect"]
+layout_mode = 0
+offset_left = 150.0
+offset_top = 800.0
+offset_right = 500.0
+offset_bottom = 900.0
+min_value = 1.0
+max_value = 2.0
+value = 1.0
+
+[node name="Panel" type="Panel" parent="CharSelect"]
+layout_mode = 0
+offset_left = 600.0
+offset_top = 375.0
+offset_right = 728.0
+offset_bottom = 503.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_kpm8p")
+
+[node name="Panel2" type="Panel" parent="CharSelect"]
+offset_left = 600.0
+offset_top = 600.0
+offset_right = 728.0
+offset_bottom = 728.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_kpm8p")
+
+[node name="CosmoButton" type="TextureButton" parent="CharSelect"]
+layout_mode = 0
+offset_left = 300.0
+offset_top = 600.0
+offset_right = 556.0
+offset_bottom = 856.0
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("5_yytgh")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = -1
+texture = ExtResource("2_ax32a")
+offset = Vector2(540, 960)
+
+[connection signal="pressed" from="CharSelect/BattleButton" to="." method="_on_battle_button_pressed"]
+[connection signal="pressed" from="CharSelect/BlancButton" to="." method="_on_blanc_button_pressed"]
+[connection signal="pressed" from="CharSelect/NinjaButton" to="." method="_on_ninja_button_pressed"]
+[connection signal="pressed" from="CharSelect/CosmoButton" to="." method="_on_cosmo_button_pressed"]

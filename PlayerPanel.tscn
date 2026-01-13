@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://bgdidskmawldu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1bvp3"]
+bg_color = Color(0, 0.666667, 0.803922, 1)
+border_width_left = 5
+border_color = Color(0, 0, 0, 1)
+
+[node name="BottomPanel" type="Panel"]
+offset_top = 1080.0
+offset_right = 1080.0
+offset_bottom = 1920.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1bvp3")
+
+[node name="RockButton" type="Button" parent="."]
+offset_left = 40.0
+offset_top = 114.0
+offset_right = 220.0
+offset_bottom = 177.0
+theme_override_font_sizes/font_size = 30
+text = "Rock Node"
+
+[node name="NinjaButton" type="Button" parent="."]
+offset_left = 258.0
+offset_top = 117.0
+offset_right = 438.0
+offset_bottom = 180.0
+theme_override_font_sizes/font_size = 30
+text = "Ninja Node"
