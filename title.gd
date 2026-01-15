@@ -6,12 +6,15 @@ const powerCost = {
 	"Rotate": 1,
 	"Meteor": 3,
 	"Shinobi Ashi": 4,
-	"00X": 4
+	"00X": 4,
+	"Combo Quarter Combat": 9,
+	"Crossup Frog Fist": 2
 }
 
 const blancSprite = preload("res://assets/Blanc.png")
 const ninjaSprite = preload("res://assets/Ninja.png")
 const cosmoSprite = preload("res://assets/Cosmo.png")
+const renSprite = preload("res://assets/Ren.png")
 
 var p1Character: String
 var p2Character: String
@@ -87,3 +90,14 @@ func _on_cosmo_button_pressed() -> void:
 		set_character(2, "Cosmo, Space Dino.\nMeteor: Wraps around the board.\nStar-Crossing Lovers: Summons piece right.", "Meteor", "Star Crossing Lovers")
 		current_pick = 1
 		$CharSelect/p2Sprite.texture = cosmoSprite
+
+
+func _on_ren_button_pressed() -> void:
+	if current_pick == 1:
+		set_character(1, "Ren. They've been around the block.\nCrossup Frog Fist: Leaps when pushed.\nCombo Quarter Combat: Take another turn.", "Crossup Frog Fist", "Combo Quarter Combat")
+		current_pick = 2
+		$CharSelect/p1Sprite.texture = renSprite
+	else:
+		set_character(2,  "Ren. They've been around the block.\nCrossup Frog Fist: Leaps when pushed.\nCombo Quarter Combat: Take another turn.", "Crossup Frog Fist", "Combo Quarter Combat")
+		current_pick = 1
+		$CharSelect/p2Sprite.texture = renSprite

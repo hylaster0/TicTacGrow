@@ -93,6 +93,23 @@ func _input(event):
 					if GlobalVars.play_mode == 1:
 						CPU_Pick_Move(GlobalVars.cpu_level)
 
+func check_board_moves():
+	for x in range(6):
+		for y in range(6):
+			if (grid_data[x][y] != 0):
+				var node_position = Vector2i(x * cell_size + cell_size / 2, y * cell_size + cell_size / 2)
+				var my_node = get_node(str(node_position))
+				if y != 0 and my_node.is_in_group("Grid Climbers"):
+					if grid_data[x][y-1] == 0:
+						# move piece up
+						move_piece(my_node, Vector2i(x,y), Vector2i(x, y-1))
+				if y != grid_size - 1 and my_node.is_in_group("Barrel of Monkeys"):
+					if grid_data[x][y+1] == 0:
+						# move piece down
+						move_piece(my_node, Vector2i(x,y), Vector2i(x, y+1))
+						pass
+					pass	
+
 func handle_move(x, y):
 	grid_data[x][y] = player
 	var nodePosition = Vector2i(x,y) * cell_size + Vector2i(cell_size / 2, cell_size /2)
@@ -100,11 +117,14 @@ func handle_move(x, y):
 	if !newNode.is_in_group("Shinobi Ashi"):
 		move_markers(nodePosition,Vector2i(x,y), newNode)
 	check_upgrade()
+	check_board_moves()
 	if check_win() != 0:
 		print("Game Over")
 		get_tree().paused = true
 		$GameOverMenu.show()
-	player *= -1
+	
+	if !newNode.is_in_group("Combo Quarter Combat"):
+		player *= -1
 	
 	if player == 1:
 		turn_count +=1
@@ -261,6 +281,18 @@ func getEndPosition(pieceNode, startPosition, changeVector):
 	var endPosition = Vector2i(startPosition.x + changeVector.x, startPosition.y + changeVector.y)
 	print(str(startPosition) + " | startPosition")
 	print(str(endPosition) + " | endPosition")
+	
+	var frog_x = endPosition.x
+	var frog_y = endPosition.y
+	if pieceNode.is_in_group("Crossup Frog Fist"):
+		# leaps over any occupied spaces, unless it would go out of bounds
+		while (frog_x >= 0 and frog_y < grid_size and frog_x < grid_size and frog_y >= 0):
+			if grid_data[endPosition.x][endPosition.y] == 0:
+				break
+			frog_x += changeVector.x
+			frog_y += changeVector.y
+		endPosition = Vector2i(frog_x, frog_y)
+
 	#im like 90% sure this can be consolidated
 	if pieceNode.is_in_group("Meteor"):
 		if (endPosition.x < 0 and endPosition.y == startPosition.y):
@@ -291,6 +323,10 @@ func getEndPosition(pieceNode, startPosition, changeVector):
 func getPieceMoveResult(pieceNode, startPosition, changeVector, group, bam):
 	var endPosition = getEndPosition(pieceNode, startPosition, changeVector)
 	print(str(endPosition) + "| endPosition")
+	if (pieceNode.is_in_group("DD Pad") and (changeVector.x != 0 and changeVector.y != 0)):
+		return 0 # DD Pads cannot be moved diagonally, so x or y must be 0
+	if (pieceNode.is_in_group("Space Defender") and changeVector.y == 1):
+		return 0 # Space Defenders cannot be moved downwards
 	if (endPosition.x < 0 or endPosition.x >= grid_size or endPosition.y < 0 or endPosition.y >= grid_size):
 		return 1 # piece is out of bounds
 	if absi(grid_data[startPosition.x][startPosition.y]) > 1 and !bam:
@@ -336,6 +372,10 @@ func move_markers(centerPosition, grid_pos, centerNode):
 					else:
 						centerGroup = "crosses"
 					var pieceMoveTest = getPieceMoveResult(get_node(str(cellPosition)), startPosition, Vector2i(x, y), centerGroup, centerNode.is_in_group("BAM!"))
+					if pieceMoveTest == 0 and centerNode.is_in_group("Knockout") and absi(grid_data[startPosition.x][startPosition.y]) != 1:
+						# knockout deletes unmovable pieces, except upgraded ones
+						grid_data[startPosition.x][startPosition.y] = 0
+						movingNode.queue_free()	
 					if pieceMoveTest == 2:
 						var endPosition = getEndPosition(movingNode, startPosition, Vector2i(x, y))
 						move_piece(movingNode, grid_pos + Vector2i(x, y), endPosition)
