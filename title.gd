@@ -8,13 +8,26 @@ const powerCost = {
 	"Shinobi Ashi": 4,
 	"00X": 4,
 	"Combo Quarter Combat": 9,
-	"Crossup Frog Fist": 2
+	"Crossup Frog Fist": 2,
+	"DD Pad": 3,
+	"Space Defender": 3,
+	"BAM!": 4,
+	"Knockout": 5,
+	"Grid Climber": 4,
+	"Barrel of Monkeys": 4,
+	"Air Pump": 3,
+	"Cheeseater": 8,
+	"Gyro Bomb": 5,
+	"Gravity Bomb": 7
 }
 
 const blancSprite = preload("res://assets/Blanc.png")
 const ninjaSprite = preload("res://assets/Ninja.png")
 const cosmoSprite = preload("res://assets/Cosmo.png")
 const renSprite = preload("res://assets/Ren.png")
+const johnSprite = preload("res://assets/John Arcade.png")
+const ernieSprite = preload("res://assets/Bert.png")
+const felixSprite = preload("res://assets/Felix.png")
 
 var p1Character: String
 var p2Character: String
@@ -101,3 +114,36 @@ func _on_ren_button_pressed() -> void:
 		set_character(2,  "Ren. They've been around the block.\nCrossup Frog Fist: Leaps when pushed.\nCombo Quarter Combat: Take another turn.", "Crossup Frog Fist", "Combo Quarter Combat")
 		current_pick = 1
 		$CharSelect/p2Sprite.texture = renSprite
+
+
+func _on_john_arcade_button_pressed() -> void:
+	if current_pick == 1:
+		set_character(1, "John Arcade. The Big Boss. \nBAM!: Can move upgraded pieces.\nKnockout: Deletes non-upgraded pieces it can't move.", "BAM!", "Knockout")
+		current_pick = 2
+		$CharSelect/p1Sprite.texture = johnSprite
+	else:
+		set_character(2, "John Arcade. The Big Boss. \nBAM!: Can move upgraded pieces.\nKnockout: Deletes non-upgraded pieces it can't move.", "BAM!", "Knockout")
+		current_pick = 1
+		$CharSelect/p2Sprite.texture = johnSprite
+
+
+func _on_felix_button_pressed() -> void:
+	if current_pick == 1:
+		set_character(1, "Felix. Construction contracter that moved up.\nGrid Climber: Moves upwards after opponent's turn.\nBarrel of Monkeys: Moves down after opponnent's tuurn", "Grid Climber", "Barrel of Monkeys")
+		current_pick = 2
+		$CharSelect/p1Sprite.texture = felixSprite
+	else:
+		set_character(2, "Felix. Construction contracter that moved up.\nGrid Climber: Moves upwards after opponent's turn.\nBarrel of Monkeys: Moves down after opponnent's tuurn", "Grid Climber", "Barrel of Monkeys")
+		current_pick = 1
+		$CharSelect/p2Sprite.texture = felixSprite
+
+
+func _on_ernie_button_pressed() -> void:
+	if current_pick == 1:
+		set_character(1, "Ernie. Micro-managing hating micro-manager.\nDD Pad: Can't be moved diagonally.\nSpace Defender: Can't be moved downwards.", "DD Pad", "Space Defender")
+		current_pick = 2
+		$CharSelect/p1Sprite.texture = ernieSprite
+	else:
+		set_character(2, "Ernie. Micro-managing hating micro-manager.\nDD Pad: Can't be moved diagonally.\nSpace Defender: Can't be moved downwards.", "DD Pad", "Space Defender")
+		current_pick = 1
+		$CharSelect/p2Sprite.texture = ernieSprite

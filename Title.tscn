@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dndlhfndare7t"]
+[gd_scene load_steps=12 format=3 uid="uid://dndlhfndare7t"]
 
 [ext_resource type="Script" uid="uid://btgmnw8xria67" path="res://title.gd" id="1_c0dwi"]
 [ext_resource type="Texture2D" uid="uid://qjenw7h7ikit" path="res://assets/SplashScreen.png" id="2_ax32a"]
@@ -7,10 +7,11 @@
 [ext_resource type="Texture2D" uid="uid://umv244jkmqqg" path="res://assets/p1Border.png" id="4_rg4ux"]
 [ext_resource type="Texture2D" uid="uid://buksdrfrya3fu" path="res://assets/Cosmo.png" id="5_yytgh"]
 [ext_resource type="Texture2D" uid="uid://bgm2c72own0ae" path="res://assets/Ren.png" id="6_kpm8p"]
+[ext_resource type="Texture2D" uid="uid://dny78jx6cubfo" path="res://assets/John Arcade.png" id="7_ti4w6"]
+[ext_resource type="Texture2D" uid="uid://c6nuj2r6lj2cn" path="res://assets/Felix.png" id="8_e8qc1"]
+[ext_resource type="Texture2D" uid="uid://jsbh3lnjlvdo" path="res://assets/Bert.png" id="9_xyp27"]
 
 [sub_resource type="Theme" id="Theme_rg4ux"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kpm8p"]
 
 [node name="TitleScreen" type="Node2D"]
 script = ExtResource("1_c0dwi")
@@ -119,14 +120,6 @@ min_value = 1.0
 max_value = 3.0
 value = 1.0
 
-[node name="Panel" type="Panel" parent="CharSelect"]
-layout_mode = 0
-offset_left = 600.0
-offset_top = 375.0
-offset_right = 728.0
-offset_bottom = 503.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_kpm8p")
-
 [node name="CosmoButton" type="TextureButton" parent="CharSelect"]
 layout_mode = 0
 offset_left = 300.0
@@ -144,6 +137,33 @@ offset_bottom = 856.0
 scale = Vector2(0.5, 0.5)
 texture_normal = ExtResource("6_kpm8p")
 
+[node name="JohnArcadeButton" type="TextureButton" parent="CharSelect"]
+layout_mode = 0
+offset_left = 600.0
+offset_top = 375.0
+offset_right = 856.0
+offset_bottom = 631.0
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("7_ti4w6")
+
+[node name="FelixButton" type="TextureButton" parent="CharSelect"]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 500.0
+offset_right = 456.0
+offset_bottom = 756.0
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("8_e8qc1")
+
+[node name="ErnieButton" type="TextureButton" parent="CharSelect"]
+layout_mode = 0
+offset_left = 450.0
+offset_top = 600.0
+offset_right = 706.0
+offset_bottom = 856.0
+scale = Vector2(0.5, 0.5)
+texture_normal = ExtResource("9_xyp27")
+
 [node name="Sprite2D" type="Sprite2D" parent="."]
 z_index = -1
 texture = ExtResource("2_ax32a")
@@ -154,3 +174,6 @@ offset = Vector2(540, 960)
 [connection signal="pressed" from="CharSelect/NinjaButton" to="." method="_on_ninja_button_pressed"]
 [connection signal="pressed" from="CharSelect/CosmoButton" to="." method="_on_cosmo_button_pressed"]
 [connection signal="pressed" from="CharSelect/RenButton" to="." method="_on_ren_button_pressed"]
+[connection signal="pressed" from="CharSelect/JohnArcadeButton" to="." method="_on_john_arcade_button_pressed"]
+[connection signal="pressed" from="CharSelect/FelixButton" to="." method="_on_felix_button_pressed"]
+[connection signal="pressed" from="CharSelect/ErnieButton" to="." method="_on_ernie_button_pressed"]

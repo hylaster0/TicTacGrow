@@ -13,7 +13,15 @@ const specialAssets = {
 	"Star Crossing Lovers": preload("res://assets/Star Crossing Lovers.png"),
 	"00X": preload("res://assets/00X.png"),
 	"Shinobi Ashi": preload("res://assets/Shinobi Ashi.png"),
-	"BAM!": preload("res://assets/BAM!.png")
+	"BAM!": preload("res://assets/BAM!.png"),
+	"Barrel of Monkeys": preload("res://assets/Barrel of Monkeys.png"),
+	"Cheeseater": preload("res://assets/Cheeseater.png"),
+	"DD Pad": preload("res://assets/DD Pad.png"),
+	"Gravity Bomb": preload("res://assets/Gravity Bomb.png"),
+	"Grid Climber": preload("res://assets/Grid Climber.png"),
+	"Gyro Bomb": preload("res://assets/Gyro Bomb.png"),
+	"Knockout": preload("res://assets/Knockout.png"),
+	"Space Defender": preload("res://assets/Space Defender.png")
 }
 
 var p1Special1Button: Button
