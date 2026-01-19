@@ -117,7 +117,7 @@ offset_top = 800.0
 offset_right = 500.0
 offset_bottom = 900.0
 min_value = 1.0
-max_value = 3.0
+max_value = 4.0
 value = 1.0
 
 [node name="CosmoButton" type="TextureButton" parent="CharSelect"]

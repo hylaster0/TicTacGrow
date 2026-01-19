@@ -191,6 +191,84 @@ func findPushableMove(targetType):
 					if grid_data[x+1][y+3] == 0:
 						positions.append(Vector2i(x+1, y+3))
 	return positions
+
+func getSumsTwoInARow(x, y):
+	var row_sum
+	var col_sum
+	var diag1_sum
+	var diag2_sum
+	
+	if (x < grid_size - 1):
+		row_sum = grid_data[x][y] + grid_data[x+1][y]
+	if (y < grid_size - 1):
+		col_sum = grid_data[x][y] + grid_data[x][y+1]
+	if (x < grid_size - 1 and y < grid_size - 1):
+		diag1_sum = grid_data[x][y] + grid_data[x+1][y+1]
+	if (x > 0 and y < grid_size - 1):
+		diag2_sum = grid_data[x][y] + grid_data[x-1][y+1]
+	
+	return [row_sum, col_sum, diag1_sum, diag2_sum]
+
+func getTwoInARowPositions():
+	var playerPiecePositions # positions that allow 3-in-a-row
+	var opposingPiecePositions # positions that block opposing 3-in-a-row
+	for x in range(6):
+		for y in range(6):
+			var sums = getSumsTwoInARow(x, y)
+			if sums[0] == player * 2:
+				playerPiecePositions.append(Vector2i(x-1, y))
+				playerPiecePositions.append(Vector2i(x+2,y))
+			if sums[0] == player * -2:
+				opposingPiecePositions.append(Vector2i(x, y-1))
+				opposingPiecePositions.append(Vector2i(x, y+1))
+				opposingPiecePositions.append(Vector2i(x+1, y-1))
+				opposingPiecePositions.append(Vector2i(x+1, y+1))
+			if sums[1] == player * 2:
+				playerPiecePositions.append(Vector2i(x, y-1))
+				playerPiecePositions.append(Vector2i(x, y+2))
+			if sums[1] == player * -2:
+				opposingPiecePositions.append(Vector2i(x-1, y))
+				opposingPiecePositions.append(Vector2i(x+1,y))
+				opposingPiecePositions.append(Vector2i(x-1, y+1))
+				opposingPiecePositions.append(Vector2i(x+1, y+1))
+			if sums[2] == player * 2:
+				playerPiecePositions.append(Vector2i(x-1, y-1))
+				playerPiecePositions.append(Vector2i(x+2, y+2))
+			if sums[2] == player * -2:
+				opposingPiecePositions.append(Vector2i(x+1, y-1))
+				opposingPiecePositions.append(Vector2i(x+1, y))
+				opposingPiecePositions.append(Vector2i(x+2, y))
+				opposingPiecePositions.append(Vector2i(x-1, y+1))
+				opposingPiecePositions.append(Vector2i(x, y+1))
+				opposingPiecePositions.append(Vector2i(x, y+2))
+			if sums[3] == player * 2:
+				playerPiecePositions.append(Vector2i(x+1, y-1))
+				playerPiecePositions.append(Vector2i(x-2, y+2))
+			if sums[3] == player * -2:
+				opposingPiecePositions.append(Vector2i(x-2, y))
+				opposingPiecePositions.append(Vector2i(x-1, y-1))
+				opposingPiecePositions.append(Vector2i(x-1, y))
+				opposingPiecePositions.append(Vector2i(x, y+1))
+				opposingPiecePositions.append(Vector2i(x, y+2))
+				opposingPiecePositions.append(Vector2i(x+1,y+1))
+				
+	var prunedPlayerPieces
+	if playerPiecePositions != null:
+		for piece in playerPiecePositions:
+			if (piece.x >= 0 and piece.x < grid_size and piece.y >= 0 and piece.y < grid_size):
+				if grid_data[piece.x][piece.y] == 0:
+					prunedPlayerPieces.append(piece)
+	if prunedPlayerPieces != null:
+		return prunedPlayerPieces
+	
+	var prunedOpposingPieces
+	if opposingPiecePositions != null:
+		for piece in opposingPiecePositions:
+			if (piece.x >= 0 and piece.x < grid_size and piece.y >= 0 and piece.y < grid_size):
+				if grid_data[piece.x][piece.y] == 0:
+					prunedOpposingPieces.append(piece)
+	return prunedOpposingPieces
+
 func CPU_FindMoveForLevel(level):
 	var x = 0
 	var y = 0
@@ -227,6 +305,11 @@ func CPU_FindMoveForLevel(level):
 		# if no center positions are open and no good pushes exist, picks randomly
 		return CPU_FindMoveForLevel(2)
 	
+	if (level >= 4): # actively tries to upgrade and block two-in-a-row pieces
+		var positions = getTwoInARowPositions()
+		if (positions != null):
+			return positions.pick_random()
+		return CPU_FindMoveForLevel(3)
 	# base case (lvl1) picks completely randomly
 	x = randi()%6
 	y = randi()%6
