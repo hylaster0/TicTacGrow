@@ -41,14 +41,14 @@ flip_h = true
 
 [node name="p2CPUButton" type="CheckButton" parent="CharSelect"]
 layout_mode = 0
-offset_left = 525.0
+offset_left = 600.0
 offset_top = 800.0
-offset_right = 729.0
-offset_bottom = 896.0
+offset_right = 644.0
+offset_bottom = 824.0
+scale = Vector2(3, 3)
 theme = SubResource("Theme_rg4ux")
 theme_override_font_sizes/font_size = 64
 button_pressed = true
-text = "CPU?"
 
 [node name="p1Border" type="Sprite2D" parent="CharSelect"]
 position = Vector2(540, 128)
@@ -84,6 +84,7 @@ Shinobi Ashi - Does not move adjacent pieces.
 scroll_active = false
 
 [node name="CheckButton" type="CheckButton" parent="CharSelect"]
+visible = false
 layout_mode = 0
 offset_left = 30.0
 offset_top = 275.0
@@ -112,10 +113,10 @@ texture_normal = ExtResource("3_e4n62")
 
 [node name="P2LevelSlider" type="HSlider" parent="CharSelect"]
 layout_mode = 0
-offset_left = 150.0
 offset_top = 800.0
-offset_right = 500.0
-offset_bottom = 900.0
+offset_right = 350.0
+offset_bottom = 880.0
+scale = Vector2(1.5, 1.5)
 min_value = 1.0
 max_value = 4.0
 value = 1.0
@@ -130,6 +131,7 @@ scale = Vector2(0.5, 0.5)
 texture_normal = ExtResource("5_yytgh")
 
 [node name="RenButton" type="TextureButton" parent="CharSelect"]
+layout_mode = 0
 offset_left = 600.0
 offset_top = 600.0
 offset_right = 856.0
@@ -169,6 +171,22 @@ z_index = -1
 texture = ExtResource("2_ax32a")
 offset = Vector2(540, 960)
 
+[node name="WorldTourButton" type="Button" parent="."]
+visible = false
+offset_left = 450.0
+offset_top = 750.0
+offset_right = 717.0
+offset_bottom = 825.0
+theme_override_font_sizes/font_size = 48
+text = "World Tour"
+
+[node name="Label" type="Label" parent="."]
+offset_top = 1650.0
+offset_right = 877.0
+offset_bottom = 1738.0
+theme_override_font_sizes/font_size = 48
+text = "CPU Level Slider & Checkbox"
+
 [connection signal="pressed" from="CharSelect/BattleButton" to="." method="_on_battle_button_pressed"]
 [connection signal="pressed" from="CharSelect/BlancButton" to="." method="_on_blanc_button_pressed"]
 [connection signal="pressed" from="CharSelect/NinjaButton" to="." method="_on_ninja_button_pressed"]
@@ -177,3 +195,4 @@ offset = Vector2(540, 960)
 [connection signal="pressed" from="CharSelect/JohnArcadeButton" to="." method="_on_john_arcade_button_pressed"]
 [connection signal="pressed" from="CharSelect/FelixButton" to="." method="_on_felix_button_pressed"]
 [connection signal="pressed" from="CharSelect/ErnieButton" to="." method="_on_ernie_button_pressed"]
+[connection signal="pressed" from="WorldTourButton" to="." method="_on_world_tour_button_pressed"]

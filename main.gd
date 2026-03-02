@@ -21,7 +21,8 @@ const specialAssets = {
 	"Grid Climber": preload("res://assets/Grid Climber.png"),
 	"Gyro Bomb": preload("res://assets/Gyro Bomb.png"),
 	"Knockout": preload("res://assets/Knockout.png"),
-	"Space Defender": preload("res://assets/Space Defender.png")
+	"Space Defender": preload("res://assets/Space Defender.png"),
+	"Crossup Frog Fist": preload("res://assets/Crossup Frog Fist.png")
 }
 
 var p1Special1Button: Button
@@ -44,7 +45,7 @@ var p2SpecialPoints: int = 0: set = updateP2Special
 func updateP2Special(new_value):
 	p2SpecialPoints = new_value
 	$OpponentPanel/OpponentSpecialPointCount.text = str(new_value)
-	updateSpecialSplash(new_value, GlobalVars.p2Special2PointsNeeded, GlobalVars.p2Special2PointsNeeded, $OpponentPanel/P2Special1Button, $OpponentPanel/P2Special2Button)
+	updateSpecialSplash(new_value, GlobalVars.p2Special2PointsNeeded, GlobalVars.p2Special2PointsNeeded, p2Special1Button, p2Special2Button)
 
 var turn_count: int = 0
 var player : int
@@ -60,6 +61,11 @@ var diag2_sum: int
 
 func new_game():
 	print(GlobalVars.play_mode)
+	p1Special1Button.text = GlobalVars.p1Special1
+	p1Special2Button.text = GlobalVars.p1Special2
+	p2Special1Button.text = GlobalVars.p2Special1
+	p2Special2Button.text = GlobalVars.p2Special2
+
 	grid_data = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]
 	row_sum = 0
 	col_sum = 0
@@ -82,6 +88,7 @@ func _ready() -> void:
 	p2Special2Button = $OpponentPanel/P2Special2Button
 	board_size = $Board.texture.get_width()
 	cell_size = board_size / grid_size
+	
 	new_game()
 	pass # Replace with function body.
 
@@ -101,21 +108,35 @@ func _input(event):
 					if GlobalVars.play_mode == 1:
 						CPU_Pick_Move(GlobalVars.cpu_level)
 
+func tiebreaker():
+	var total_sum: int = 0
+	for x in range(grid_size):
+		for y in range(grid_size):
+			total_sum += grid_data[x][y]
+	if total_sum > 0:
+		return 1
+	return 2
+
 func check_board_moves():
 	for x in range(6):
 		for y in range(6):
 			if (grid_data[x][y] != 0):
 				var node_position = Vector2i(x * cell_size + cell_size / 2, y * cell_size + cell_size / 2)
 				var my_node = get_node(str(node_position))
-				if y != 0 and my_node.is_in_group("Grid Climbers"):
-					if grid_data[x][y-1] == 0:
+				if y != 0 and my_node.is_in_group("Grid Climber"):
+					if grid_data[x][y-1] == 0 and (player > 0) != (grid_data[x][y] > 0):
 						# move piece up
 						move_piece(my_node, Vector2i(x,y), Vector2i(x, y-1))
-				if y != grid_size - 1 and my_node.is_in_group("Barrel of Monkeys"):
-					if grid_data[x][y+1] == 0:
+			var revx = grid_size - 1 - x
+			var revy = grid_size - 1 - y
+			if grid_data[revx][revy] != 0:
+				var node_position = Vector2i(revx * cell_size + cell_size / 2, revy * cell_size + cell_size / 2)
+				var my_node = get_node(str(node_position))
+				if revy != grid_size - 1 and my_node.is_in_group("Barrel of Monkeys"):
+					if grid_data[revx][revy + 1] == 0 and (player > 0) != (grid_data[x][y] > 0):
+						print("Moving Barrel!")
 						# move piece down
-						move_piece(my_node, Vector2i(x,y), Vector2i(x, y+1))
-						pass
+						move_piece(my_node, Vector2i(revx,revy), Vector2i(revx, revy+1))
 					pass	
 
 func handle_move(x, y):
@@ -126,22 +147,33 @@ func handle_move(x, y):
 		move_markers(nodePosition,Vector2i(x,y), newNode)
 	check_upgrade()
 	check_board_moves()
-	if check_win() != 0:
+	var win = check_win()
+	if win == 1:
 		print("Game Over")
 		get_tree().paused = true
 		$GameOverMenu.show()
-	
-	if !newNode.is_in_group("Combo Quarter Combat"):
-		player *= -1
-	
-	if player == 1:
-		turn_count +=1
-		$InfoPanel/RoundTimer.text = "Round Timer: " + str(30-turn_count)
-		if turn_count == 30:
-			print("Game Ended via Timeout")
-			$GameOverMenu.show()
-	$PlayerPanel.visible = !$PlayerPanel.visible
-	$OpponentPanel.visible = !$OpponentPanel.visible
+		$GameOverMenu.get_node("GameOverPanel/ResultLabel").text = "Player 1 Wins!"
+	elif win == -1:
+		print("Game Over")
+		get_tree().paused = true
+		$GameOverMenu.show()
+		$GameOverMenu.get_node("GameOverPanel/ResultLabel").text = "Player 2 Wins!"
+
+	else:	
+		if !newNode.is_in_group("Combo Quarter Combat"):
+			player *= -1
+		
+		if player == 1:
+			turn_count +=1
+			$InfoPanel/RoundTimer.text = "Round Timer: " + str(30-turn_count)
+			if turn_count == 30:
+				get_tree().paused = true
+				print("Game Ended via Timeout")
+				$GameOverMenu.show()
+				var winner = tiebreaker()
+				$GameOverMenu.get_node("GameOverPanel/ResultLabel").text = "Timeout! Player " + str(winner) + " wins"
+		
+		# todo disable/enable the active player's stuff based on their points
 
 func findPushableMove(targetType):
 	var positions: Array
@@ -210,8 +242,8 @@ func getSumsTwoInARow(x, y):
 	return [row_sum, col_sum, diag1_sum, diag2_sum]
 
 func getTwoInARowPositions():
-	var playerPiecePositions # positions that allow 3-in-a-row
-	var opposingPiecePositions # positions that block opposing 3-in-a-row
+	var playerPiecePositions: Array # positions that allow 3-in-a-row
+	var opposingPiecePositions: Array # positions that block opposing 3-in-a-row
 	for x in range(6):
 		for y in range(6):
 			var sums = getSumsTwoInARow(x, y)
@@ -252,17 +284,17 @@ func getTwoInARowPositions():
 				opposingPiecePositions.append(Vector2i(x, y+2))
 				opposingPiecePositions.append(Vector2i(x+1,y+1))
 				
-	var prunedPlayerPieces
-	if playerPiecePositions != null:
+	var prunedPlayerPieces: Array
+	if playerPiecePositions.size() > 0:
 		for piece in playerPiecePositions:
 			if (piece.x >= 0 and piece.x < grid_size and piece.y >= 0 and piece.y < grid_size):
 				if grid_data[piece.x][piece.y] == 0:
 					prunedPlayerPieces.append(piece)
-	if prunedPlayerPieces != null:
+	if prunedPlayerPieces.size() > 0 :
 		return prunedPlayerPieces
 	
-	var prunedOpposingPieces
-	if opposingPiecePositions != null:
+	var prunedOpposingPieces: Array
+	if opposingPiecePositions.size() > 0 :
 		for piece in opposingPiecePositions:
 			if (piece.x >= 0 and piece.x < grid_size and piece.y >= 0 and piece.y < grid_size):
 				if grid_data[piece.x][piece.y] == 0:
@@ -307,7 +339,7 @@ func CPU_FindMoveForLevel(level):
 	
 	if (level >= 4): # actively tries to upgrade and block two-in-a-row pieces
 		var positions = getTwoInARowPositions()
-		if (positions != null):
+		if (positions.size() > 0 ):
 			return positions.pick_random()
 		return CPU_FindMoveForLevel(3)
 	# base case (lvl1) picks completely randomly
@@ -535,7 +567,11 @@ func check_win():
 
 
 func _on_game_over_menu_restart() -> void:
-	new_game()
+	get_tree().paused = false
+	if GlobalVars.game_type == 1: # world tour
+		get_tree().change_scene_to_file("res://Transition.tscn")
+	else:
+		get_tree().change_scene_to_file("res://Title.tscn")
 
 func _on_rock_button_pressed() -> void:
 	if (!p1Special1Active):
